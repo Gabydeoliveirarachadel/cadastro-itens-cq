@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Visão Geral</h1>
+    <h3>Listagem de pessoas</h3>
+
+    <div id="status">Carregando...</div>
+    <div id="lista">
+      <!-- Lista de pessoas será inserida aqui -->
+    </div>
+
+    <div>
+      <button onclick="mostrarFormulario()">➕ Adicionar Pessoa</button>
+    </div>
+
+    <form>
+      <label>Nome:</label>
+      <input type="text" id="nome" name="nome" required />
+
+      <label>Login:</label>
+      <input type="text" id="login" name="login" required />
+
+      <label>Senha:</label>
+      <input type="password" id="senha" name="senha" required />
+    </form>
+
+    <script>
+      async function carregarPessoas() {
+        const response = await fetch("/pessoas");
+
+        //Atualizar div com id = "status"
+        const elemento = document.getElementById("status");
+        if (!response.ok) {
+          elemento.textContent = "Não foi possível carregar as pessoas.";
+        }
+        elemento.textContent = "Pessoas carregadas com sucesso!";
+
+        const pessoas = await response.json();
+
+        const container = document.getElementById("lista")
+        const ul = document.createElement('ul')
+
+        for(let c=0; c<pessoas.length; c++){
+          const pessoa = pessoas[c]
+          const texto = `NOME: ${pessoa.nome}  -- ${pessoa.login}`
+
+          const li = document.createElement("li");
+          li.textContent = texto
+          ul.appendChild(li)
+        }
+        container.appendChild(ul)
+      }
+      carregarPessoas();
+    </script>
+  </body>
+</html>
