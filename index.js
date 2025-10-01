@@ -6,7 +6,6 @@ const app = express();
 const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 const publicDir = path.join(__dirname, './public');
 
 let pessoas = [
@@ -62,6 +61,14 @@ let pessoas = [
     },
 ];
 
+// ========================================
+// 3. ROTAS DA API (ENDPOINTS)
+// ========================================
+
+// ROTA DE TESTE
+// Método: GET
+// Endpoint: http://localhost:3000/
+// Função: Verificar se a API está funcionando
 app.get("/", (req, res) => {
     res.sendFile(path.join(publicDir, "login.html"));
 });
@@ -90,29 +97,29 @@ app.post('/login', (req, res) => {
             message: "Senha inválida"
         })
     }
-    // res.status(200).json({ status: 200, message: "Login com sucesso" })
+    //res.status(200).json({status: 200, mensagem:"Login"})
+    //   res.status(200).json({ status: 200, message: "Login com sucesso" })
     res.redirect('/itens.html')
 })
 
-app.get('/itens.html', (req, res) => {
-    res.sendFile(path.join(publicDir, 'itens.html'));
+app.get("/itens.html", (req, res) => {
+    res.sendFile(path.join(publicDir, "itens.html"));
 });
 
 app.get('/pessoas', (req, res) => {
     res.status(200).json(pessoas);
 })
 
-//POST: Criar uma pessoa no array pessoas
-app.post('/pessoas', (req, res) => {
-    const {nome, login, senha } = req.body
+app.post('/pessoa', (req, res) => {
+    const { nome, loguin, senha, idade, irmãos, cidade, hobby } = req.body
 
-    if(!nome || !senha || !login){
-        res.status(400).json('Faltou informação')
+    if (!nome || !senha || login) {
+        res.status(400).json('faltou informação ')
     }
 
-    const pessoaExiste = pessoas.find((p) => p.login === login)
-    if(pessoaExiste){
-        res.status(404).json("Pessoa existe")
+    const pessoaExiste = pessoas.findIndex((p) => p.login === login)
+    if (!pessoaExiste !== -1) {
+        res.status(404).json("pessoa existe")
     }
 
     const novaPessoa = {
@@ -120,11 +127,33 @@ app.post('/pessoas', (req, res) => {
         nome,
         login,
         senha,
+        idade,
+        irmaos,
+        cidade,
+        hobby
     }
     pessoas.push(novaPessoa)
     res.status(201).json("Pessoa criada com sucesso!")
 })
 
+
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+app.delete('/pessoas/:id', (req, res) => {
+    const id = parseInt(req.params.id); // Convert the ID from string to integer
+
+    // Find the index of the person to be deleted
+    const index = pessoas.findIndex(p => p.id === id);
+
+    if (index !== -1) {
+        // Remove the person from the array
+        pessoas.splice(index, 1);
+        res.status(200).json({ status: 200, message: 'Pessoa removida com sucesso.' });
+    } else {
+        res.status(404).json({ status: 404, message: 'Pessoa não encontrada.' });
+    }
+
+
+})
