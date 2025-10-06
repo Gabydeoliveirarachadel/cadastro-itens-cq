@@ -5,12 +5,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home</title>
+  <!-- <link rel="stylesheet" href="style.css"> -->
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 30px;
       background-color: #f9f9f9;
       color: #270ba5;
+    }
+
+    li:hover {
+      background-color: aqua;
+      transform: translateX(3px);
     }
   </style>
 </head>
@@ -40,6 +46,10 @@
 
     <button type="submit" onclick="adicionarPessoa()">adicionar pessoas</button>
   </form>
+
+  <div id="detalhes">
+    <strong>selecione uma pessoa para ver os</strong>
+  </div>
 
   <script>
     async function carregarPessoas() {
@@ -77,7 +87,7 @@
         li.appendChild(botao);
         ul.appendChild(li);
 
-        
+
       }
       container.appendChild(ul);
     }
@@ -120,8 +130,15 @@
         container.appendChild(ul);
       }
 
+
+      const botao = document.createElement("button");
+      botao.textContent = "X";
+      botao.style.marginLeft = "10px";
+      botao.onclick = () => deletarPessoa(pessoa.id, li);
+
       const li = document.createElement("li");
       li.textContent = `NOME: ${nome} -- ${login}`;
+      li.appendChild(botao);
       ul.appendChild(li);
 
       document.getElementById("formulario").reset();
@@ -133,8 +150,9 @@
       console.log("QUERO APAGAR A PESSOA COM ID = ", id);
 
       const response = await fetch(`/pessoas/${id}`, {
-        methode: "DELETE",
+        method: "DELETE",
       });
+
       if (response.ok) {
 
         alert("pessoa deletada com sucesso!");
@@ -142,6 +160,17 @@
       } else {
         alert("erro ao deletar pessoa.");
       }
+    }
+
+    async function selecionarPessoa(id) {
+      const response = await fetch(`/pessoas/${id}`)
+      if (!response.ok) {
+        elemento.textContent = "Não foi possível carregar as pessoas.";
+      }
+      elemento.textContent = "Pessoas carregadas com sucesso!";
+
+      const pessoas = await response.json();
+
     }
   </script>
 </body>

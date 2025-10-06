@@ -110,6 +110,19 @@ app.get('/pessoas', (req, res) => {
     res.status(200).json(pessoas);
 })
 
+app.get('/pessoas/:id', (req, res) => {
+    const pessoaId = req.params.id;
+
+    // Encontre o índice da pessoa a ser deletada
+    const pessoa = pessoas.find(p => p.id === pessoaId);
+
+    if (!pessoa) {
+        res.status(404).json({ status: 404, message: 'Pessoa não encontrada.' });
+    } else {
+        res.status(200).json(pessoa);
+    }
+})
+
 app.post('/pessoa', (req, res) => {
     const { nome, loguin, senha, idade, irmãos, cidade, hobby } = req.body
 
@@ -142,18 +155,23 @@ app.listen(PORT, () => {
 });
 
 app.delete('/pessoas/:id', (req, res) => {
-    const id = parseInt(req.params.id); // Convert the ID from string to integer
+    const pessoaId = req.params.id;
 
-    // Find the index of the person to be deleted
-    const index = pessoas.findIndex(p => p.id === id);
+    // Encontre o índice da pessoa a ser deletada
+    const index = pessoas.findIndex(p => p.id === pessoaId);
 
     if (index !== -1) {
-        // Remove the person from the array
+        // Remove a pessoa do array
         pessoas.splice(index, 1);
-        res.status(200).json({ status: 200, message: 'Pessoa removida com sucesso.' });
+        console.log(`Apagando pessoa com id: ${pessoaId}`); // Correção do template literal
+        res.status(200).send('Pessoa deletada com sucesso');
     } else {
         res.status(404).json({ status: 404, message: 'Pessoa não encontrada.' });
     }
+});
 
+app.put("/pessoas/id", (req, res) => {
+    const pessoaId = req.params.id;
+    res.json(`Pessoa com ID ${pessoaId} atualizada`);
+});
 
-})
